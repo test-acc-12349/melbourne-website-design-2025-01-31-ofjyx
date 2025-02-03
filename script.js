@@ -1,8 +1,31 @@
-// Create a new file called script.js
+// script.js
 document.addEventListener('DOMContentLoaded', function() {
     const mobileMenuButton = document.querySelector('.mobile-menu-button');
     const mobileMenu = document.querySelector('.mobile-menu');
     
+    // Detect if we're in a subfolder
+    const isInSubfolder = window.location.pathname.split('/').length > 2;
+    const basePath = isInSubfolder ? '../' : '';
+
+    // Update all navigation links to use the correct path
+    const updateNavigationPaths = () => {
+        const allNavLinks = document.querySelectorAll('nav a[href^="index.html"], nav a[href^="#"]');
+        
+        allNavLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href.startsWith('index.html')) {
+                // For links that already point to index.html, add the base path
+                link.href = basePath + href;
+            } else if (href.startsWith('#') && isInSubfolder) {
+                // For hash links in subfolders, add the path to index.html
+                link.href = basePath + 'index.html' + href;
+            }
+        });
+    };
+
+    // Update paths when the page loads
+    updateNavigationPaths();
+
     // Toggle mobile menu
     mobileMenuButton.addEventListener('click', function() {
         mobileMenu.classList.toggle('hidden');
@@ -17,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Close mobile menu when clicking a link (for smooth scrolling experience)
+    // Close mobile menu when clicking a link
     const mobileMenuLinks = mobileMenu.querySelectorAll('a');
     mobileMenuLinks.forEach(link => {
         link.addEventListener('click', function() {
